@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulaire Élève</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4CAF50">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker enregistré !'));
+    }
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 10px;
+      background: #f0f8ff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+    .message {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>Ajouter un élève</h2>
+  <input type="text" id="nom" placeholder="Nom de l'élève">
+  <input type="text" id="classe" placeholder="Classe">
+  <button onclick="ajouterEleve()">Soumettre</button>
+  <div class="message" id="message"></div>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/REMPLACEZ_CECI_PAR_VOTRE_URL/exec';
+
+    function ajouterEleve() {
+      const nom = document.getElementById('nom').value;
+      const classe = document.getElementById('classe').value;
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({ nom: nom, classe: classe }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('message').innerText = "Élève ajouté avec succès !";
+          document.getElementById('nom').value = "";
+          document.getElementById('classe').value = "";
+        } else {
+          document.getElementById('message').innerText = "Erreur : " + data.error;
+        }
+      })
+      .catch(error => {
+        document.getElementById('message').innerText = "Erreur de connexion.";
+        console.error(error);
+      });
+    }
+  </script>
+</body>
+</html>
